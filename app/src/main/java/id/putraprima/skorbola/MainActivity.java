@@ -3,6 +3,7 @@ package id.putraprima.skorbola;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,15 +25,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int AWAY_REQUEST_CODE = 2;
     private static final String TAG = MainActivity.class.getCanonicalName();
 
-    private String hometeam;
-    private String awayteam;
-    private EditText homeTeamInput;
-    private EditText awayTeamInput;
-    private ImageView homeLogo;
-    private ImageView awayLogo;
+    private String hometeam, awayteam;
+    private EditText homeTeamInput, awayTeamInput;
+    private ImageView homeLogo, awayLogo;
     private Button buttonTeam;
-    private Uri homeImg;
-    private  Uri awayImg;
+    private Uri homeImg, awayImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +45,35 @@ public class MainActivity extends AppCompatActivity {
         buttonTeam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //intent
                 hometeam = homeTeamInput.getText().toString();
                 awayteam = awayTeamInput.getText().toString();
-                Intent intent = new Intent(MainActivity.this, MatchActivity.class);
-                intent.putExtra("namahome", hometeam);
-                intent.putExtra("namaaway", awayteam);
-                intent.putExtra("homeImg", homeImg.toString());
-                intent.putExtra("awayImg", awayImg.toString());
-                startActivity(intent);
+                if (awayImg != null && homeImg != null) {
+                    if (!hometeam.equals("") &&  !awayteam.equals("")){
+
+                        Intent intent = new Intent(MainActivity.this, MatchActivity.class);
+                        intent.putExtra("namahome", hometeam);
+                        intent.putExtra("namaaway", awayteam);
+                        intent.putExtra("homeImg", homeImg.toString());
+                        intent.putExtra("awayImg", awayImg.toString());
+                        startActivity(intent);
+
+                    }else{
+                        Context context = getApplicationContext();
+                        CharSequence text = "Nama team harus diisi semua!";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+
+                }else {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Logo dan nama team harus diisi semua!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
             }
         });
 
@@ -84,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_CANCELED){
             Log.d(TAG, "Pilih gambar dicancel");
